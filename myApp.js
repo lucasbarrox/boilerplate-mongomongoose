@@ -1,8 +1,7 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
-
-
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.MONGO_URI);
+mongoose.set('strictQuery', false);
 
 const personSchema = new mongoose.Schema({
   name: {
@@ -119,10 +118,19 @@ const removeById = async (personId, done) => {
  }
 };
 
-const removeManyPeople = (done) => {
-  const nameToRemove = "Mary";
+const removeManyPeople = async (done) => {
+ const nameToRemove = "Mary";
+ try {
+   const result = await Person.remove({ name: nameToRemove });
+   const showResult = {
+     ok: 1,
+     n: result.deletedCount
+   };
+   done(null, showResult);
 
-  done(null /*, data*/);
+ } catch (err) {
+   done(err);
+ }
 };
 
 const queryChain = (done) => {
