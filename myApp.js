@@ -133,10 +133,21 @@ const removeManyPeople = async (done) => {
  }
 };
 
-const queryChain = (done) => {
-  const foodToSearch = "burrito";
-
-  done(null /*, data*/);
+const queryChain = async (done) => {
+ const foodToSearch = "burrito";
+ try {
+   const people = await Person.find({ favoriteFoods: foodToSearch })
+     .sort({ name: 1 })
+     .limit(2)              
+     .select({ age: 0 })   
+     .exec();
+  
+   console.log("Query chain result:", people);
+   done(null, people);
+ } catch (err) {
+   console.error(err);
+   done(err);
+ }
 };
 
 /** **Well Done !!**
